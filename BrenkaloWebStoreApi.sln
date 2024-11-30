@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35431.28
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrenkaloWebStoreApi", "BrenkaloWebStoreApi\BrenkaloWebStoreApi.csproj", "{16BF93B5-25DC-4DC6-8004-035C99A2720A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{16BF93B5-25DC-4DC6-8004-035C99A2720A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16BF93B5-25DC-4DC6-8004-035C99A2720A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16BF93B5-25DC-4DC6-8004-035C99A2720A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16BF93B5-25DC-4DC6-8004-035C99A2720A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {22B529CB-C0EB-4BBF-A591-CDFCB03416A3}
+	EndGlobalSection
+EndGlobal
