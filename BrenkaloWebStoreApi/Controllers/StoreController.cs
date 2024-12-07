@@ -23,7 +23,7 @@ namespace BrenkaloWebStoreApi.Controllers
                 var stores = await _storeService.GetAllStoresAsync();
                 return Ok(stores);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Internal server error.");
             }

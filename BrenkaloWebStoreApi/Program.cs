@@ -1,4 +1,4 @@
-using BrenkaloWebStoreApi.Models;
+using BrenkaloWebStoreApi.Data;
 using BrenkaloWebStoreApi.Services;
 using Microsoft.EntityFrameworkCore;
 

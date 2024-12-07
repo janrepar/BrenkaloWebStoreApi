@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using BrenkaloWebStoreApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BrenkaloWebStoreApi.Models;
+namespace BrenkaloWebStoreApi.Data;
 
 public partial class WebStoreContext : DbContext
 {
