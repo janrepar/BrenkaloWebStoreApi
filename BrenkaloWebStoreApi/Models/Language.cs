@@ -26,4 +26,6 @@ public partial class Language
     public virtual ICollection<ProductDescription> ProductDescriptions { get; set; } = new List<ProductDescription>();
 
     public virtual ICollection<ProductTranslation> ProductTranslations { get; set; } = new List<ProductTranslation>();
+
+    public virtual ICollection<StoreMessage> StoreMessages { get; set; } = new List<StoreMessage>();
 }

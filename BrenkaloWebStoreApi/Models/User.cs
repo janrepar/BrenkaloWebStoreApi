@@ -33,6 +33,8 @@ public partial class User
 
     public virtual ICollection<ProductReview> ProductReviews { get; set; } = new List<ProductReview>();
 
+    public virtual ICollection<StoreMessage> StoreMessages { get; set; } = new List<StoreMessage>();
+
     public virtual ICollection<UserAddress> UserAddresses { get; set; } = new List<UserAddress>();
 
     public virtual ICollection<UserSession> UserSessions { get; set; } = new List<UserSession>();

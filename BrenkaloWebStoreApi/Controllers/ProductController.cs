@@ -19,8 +19,35 @@ namespace BrenkaloWebStoreApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
         {
-            var products = await _productService.GetAllProductsAsync();
-            return Ok(products);
+            try
+            {
+                var products = await _productService.GetAllProductsAsync();
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductById(int id)
+        {
+            try
+            {
+                var product = await _productService.GetProductByIdAsync(id);
+
+                if (product == null)
+                {
+                    return BadRequest("Product not found.");
+                }
+
+                return Ok(product);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error.");
+            }
         }
     }
 }

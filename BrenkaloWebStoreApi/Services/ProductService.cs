@@ -20,5 +20,14 @@ namespace BrenkaloWebStoreApi.Services
                 .Include(p => p.Vat)
                 .ToListAsync();
         }
+
+        public async Task<Product?> GetProductByIdAsync(int id)
+        {
+            return await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Subcategory)
+                .Include(p => p.Vat)
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
     }
 }

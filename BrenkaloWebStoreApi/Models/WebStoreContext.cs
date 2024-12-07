@@ -35,6 +35,12 @@ public partial class WebStoreContext : DbContext
 
     public virtual DbSet<ProductTranslation> ProductTranslations { get; set; }
 
+    public virtual DbSet<Store> Stores { get; set; }
+
+    public virtual DbSet<StoreMessage> StoreMessages { get; set; }
+
+    public virtual DbSet<StorePicture> StorePictures { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserAddress> UserAddresses { get; set; }
@@ -360,6 +366,92 @@ public partial class WebStoreContext : DbContext
             entity.HasOne(d => d.Language).WithMany(p => p.ProductTranslations).HasForeignKey(d => d.LanguageId);
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductTranslations).HasForeignKey(d => d.ProductId);
+        });
+
+        modelBuilder.Entity<Store>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Address).HasColumnName("address");
+            entity.Property(e => e.ContactEmail).HasColumnName("contact_email");
+            entity.Property(e => e.ContactPhone).HasColumnName("contact_phone");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("DATETIME")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Latitude).HasColumnName("latitude");
+            entity.Property(e => e.Longitude).HasColumnName("longitude");
+            entity.Property(e => e.ManagerName).HasColumnName("manager_name");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.OpeningHours).HasColumnName("opening_hours");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("DATETIME")
+                .HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<StoreMessage>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("DATETIME")
+                .HasColumnName("created_at");
+            entity.Property(e => e.LanguageId).HasColumnName("language_id");
+            entity.Property(e => e.Message).HasColumnName("message");
+            entity.Property(e => e.Status)
+                .HasDefaultValue(0)
+                .HasColumnName("status");
+            entity.Property(e => e.StoreId).HasColumnName("store_id");
+            entity.Property(e => e.Title).HasColumnName("title");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("DATETIME")
+                .HasColumnName("updated_at");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.Language).WithMany(p => p.StoreMessages).HasForeignKey(d => d.LanguageId);
+
+            entity.HasOne(d => d.Store).WithMany(p => p.StoreMessages).HasForeignKey(d => d.StoreId);
+
+            entity.HasOne(d => d.User).WithMany(p => p.StoreMessages)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<StorePicture>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Alt).HasColumnName("alt");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("DATETIME")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.IsDefault)
+                .HasDefaultValue(0)
+                .HasColumnName("is_default");
+            entity.Property(e => e.LanguageId).HasColumnName("language_id");
+            entity.Property(e => e.ParentPictureId).HasColumnName("parent_picture_id");
+            entity.Property(e => e.PictureType)
+                .HasDefaultValue("full")
+                .HasColumnName("picture_type");
+            entity.Property(e => e.PictureUrl).HasColumnName("picture_url");
+            entity.Property(e => e.Size).HasColumnName("size");
+            entity.Property(e => e.SortOrder)
+                .HasDefaultValue(0)
+                .HasColumnName("sort_order");
+            entity.Property(e => e.StoreId).HasColumnName("store_id");
+            entity.Property(e => e.Title).HasColumnName("title");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("DATETIME")
+                .HasColumnName("updated_at");
+
+            entity.HasOne(d => d.ParentPicture).WithMany(p => p.InverseParentPicture)
+                .HasForeignKey(d => d.ParentPictureId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(d => d.Store).WithMany(p => p.StorePictures).HasForeignKey(d => d.StoreId);
         });
 
         modelBuilder.Entity<User>(entity =>

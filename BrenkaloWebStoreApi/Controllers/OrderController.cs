@@ -5,7 +5,7 @@ namespace BrenkaloWebStoreApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WebStoreApiController : ControllerBase
+    public class OrderController : ControllerBase
     {
     }
 }
