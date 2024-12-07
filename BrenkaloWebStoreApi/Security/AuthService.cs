@@ -41,7 +41,7 @@ namespace BrenkaloWebStoreApi.Security
             {
                 Username = request.Username,
                 Pwd = passwordHash,
-                UserRole = request.UserRole, // Assign role to the user
+                UserRole = request.UserRole, 
                 Firstname = request.Firstname,
                 Lastname = request.Lastname,
                 Email = request.Email,
@@ -59,7 +59,7 @@ namespace BrenkaloWebStoreApi.Security
 
             if (user == null || !VerifyPasswordHash(request.Pwd, user.Pwd))
             {
-                return null; // Username or password is incorrect
+                return null; 
             }
 
             string token = CreateToken(user);
@@ -88,7 +88,7 @@ namespace BrenkaloWebStoreApi.Security
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(5),
+                expires: DateTime.Now.AddDays(1),
                 signingCredentials: credentials);
 
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);

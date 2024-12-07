@@ -1,9 +1,10 @@
-﻿using BrenkaloWebStoreApi.Models;
+﻿using BrenkaloWebStoreApi.Data;
+using BrenkaloWebStoreApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BrenkaloWebStoreApi.Services
 {
-    public class OrderService
+    public class OrderService : IOrderService
     {
         private readonly WebStoreContext _context;
 

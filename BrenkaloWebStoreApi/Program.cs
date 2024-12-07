@@ -1,4 +1,5 @@
 using BrenkaloWebStoreApi.Data;
+using BrenkaloWebStoreApi.Security;
 using BrenkaloWebStoreApi.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,9 @@ namespace BrenkaloWebStoreApi
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))); // Update the connection string
 
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IStoreService, StoreService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             // Add controllers.
             builder.Services.AddControllers();

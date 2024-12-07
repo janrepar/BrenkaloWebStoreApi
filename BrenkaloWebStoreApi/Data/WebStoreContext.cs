@@ -24,6 +24,8 @@ public partial class WebStoreContext : DbContext
 
     public virtual DbSet<Order> Orders { get; set; }
 
+    public virtual DbSet<OrderProduct> OrderProducts { get; set; }
+
     public virtual DbSet<Product> Products { get; set; }
 
     public virtual DbSet<ProductDescription> ProductDescriptions { get; set; }
@@ -51,6 +53,7 @@ public partial class WebStoreContext : DbContext
     public virtual DbSet<Vatrate> Vatrates { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlite("Data Source=WebStore.db");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -166,6 +169,36 @@ public partial class WebStoreContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<OrderProduct>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("DATETIME")
+                .HasColumnName("created_at");
+            entity.Property(e => e.OrderId).HasColumnName("order_id");
+            entity.Property(e => e.PricePerUnit).HasColumnName("price_per_unit");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.ProductName).HasColumnName("product_name");
+            entity.Property(e => e.ProductSku).HasColumnName("product_sku");
+            entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.TotalPrice).HasColumnName("total_price");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("DATETIME")
+                .HasColumnName("updated_at");
+            entity.Property(e => e.VatAmount)
+                .HasDefaultValue(0.0)
+                .HasColumnName("vat_amount");
+            entity.Property(e => e.VatRate)
+                .HasDefaultValue(0.0)
+                .HasColumnName("vat_rate");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderProducts).HasForeignKey(d => d.OrderId);
+
+            entity.HasOne(d => d.Product).WithMany(p => p.OrderProducts).HasForeignKey(d => d.ProductId);
         });
 
         modelBuilder.Entity<Product>(entity =>
