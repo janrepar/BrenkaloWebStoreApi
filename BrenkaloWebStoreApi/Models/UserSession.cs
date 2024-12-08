@@ -13,7 +13,7 @@ public partial class UserSession
 
     public string? RequestIp { get; set; }
 
-    public string ValidUntil { get; set; } = null!;
+    public DateTime ValidUntil { get; set; }
 
     public string? CreatedAt { get; set; }
 

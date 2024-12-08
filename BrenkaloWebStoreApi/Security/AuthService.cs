@@ -21,18 +21,15 @@ namespace BrenkaloWebStoreApi.Security
             _context = context;
         }
 
+        // TODO Error handling
+
         public async Task<ActionResult<User>> Register(UserDto request)
         {
             var userInDB = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
 
-            if (userInDB != null)
+            if (userInDB != null || string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Pwd))
             {
-                return null; // Username already exists
-            }
-
-            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Pwd))
-            {
-                return null; // Invalid input
+                return null; // Username already exists or invalid output
             }
 
             string passwordHash = CreatePasswordHash(request.Pwd);
@@ -59,18 +56,80 @@ namespace BrenkaloWebStoreApi.Security
 
             if (user == null || !VerifyPasswordHash(request.Pwd, user.Pwd))
             {
-                return null; 
+                return null; // Invalid username or password
             }
 
-            string token = CreateToken(user);
-            return token;
+            // Generate access and refresh tokens
+            string accessToken = CreateToken(user);
+            string refreshToken = CreateRefreshToken();
+
+            // Save refresh token in the database
+            var session = new UserSession
+            {
+                UserId = user.Id,
+                Token = refreshToken,
+                RequestIp = "UserIPAddress", 
+                ValidUntil = DateTime.UtcNow.AddDays(7), 
+            };
+
+            await SaveSession(session);
+
+            return new JsonResult(new { accessToken, refreshToken });
         }
 
-        public async Task<ActionResult<string>> RefreshToken()
+        public async Task<ActionResult<string>> RefreshToken(string refreshToken)
         {
-            var user = new User();
-            string token = CreateToken(user);
-            return token;
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return new UnauthorizedResult();
+            }
+
+            var session = await GetSessionByToken(refreshToken);
+            if (session == null || session.ValidUntil < DateTime.UtcNow)
+            {
+                return new UnauthorizedResult(); // Token invalid or expired
+            }
+
+            // Generate new tokens
+            string accessToken = CreateToken(session.User);
+            string newRefreshToken = CreateRefreshToken();
+
+            // Rotate refresh token
+            session.Token = newRefreshToken;
+            session.ValidUntil = DateTime.UtcNow.AddDays(7);
+            session.CreatedAt = DateTime.UtcNow.ToString("o");
+            await _context.SaveChangesAsync();
+
+            return new JsonResult(new { accessToken, refreshToken = newRefreshToken });
+        }
+
+        public async Task<UserSession?> GetSessionByToken(string refreshToken)
+        {
+            return await _context.UserSessions
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.Token == refreshToken && s.ValidUntil > DateTime.UtcNow);
+        }
+
+        public async Task SaveSession(UserSession session)
+        {
+            _context.UserSessions.Add(session);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task InvalidateSession(int sessionId)
+        {
+            var session = await _context.UserSessions.FindAsync(sessionId);
+            if (session != null)
+            {
+                _context.UserSessions.Remove(session);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private string CreateRefreshToken()
+        {
+            byte[] randomBytes = RandomNumberGenerator.GetBytes(64);
+            return Convert.ToBase64String(randomBytes);
         }
 
         private string CreateToken(User user)
@@ -99,9 +158,9 @@ namespace BrenkaloWebStoreApi.Security
         // Create password hash and return it as a Base64 string
         private string CreatePasswordHash(string password)
         {
-            using (var hmac = new HMACSHA512())
+            using (var sha512 = SHA512.Create())
             {
-                var hash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                var hash = sha512.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
                 return Convert.ToBase64String(hash); // Encode as Base64 string
             }
         }
@@ -109,9 +168,9 @@ namespace BrenkaloWebStoreApi.Security
         // Verify password hash by decoding the Base64 string
         private bool VerifyPasswordHash(string password, string storedHash)
         {
-            using (var hmac = new HMACSHA512())
+            using (var sha512 = SHA512.Create())
             {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                var computedHash = sha512.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
                 var storedHashBytes = Convert.FromBase64String(storedHash); // Decode Base64 string
                 return computedHash.SequenceEqual(storedHashBytes);
             }
