@@ -21,11 +21,11 @@ public partial class Order
 
     public string? BillingAddress { get; set; }
 
-    public int OrderStatusId { get; set; }
+    public string? OrderStatus { get; set; }
 
     public string? CustomerNotes { get; set; }
 
-    public double TotalAmount { get; set; }
+    public double? TotalAmount { get; set; }
 
     public double? VatAmount { get; set; }
 
@@ -35,9 +35,9 @@ public partial class Order
 
     public string? ShippingTrackingCode { get; set; }
 
-    public string? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    public string? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
 

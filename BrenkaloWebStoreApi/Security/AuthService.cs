@@ -77,6 +77,31 @@ namespace BrenkaloWebStoreApi.Security
             return new JsonResult(new { accessToken, refreshToken });
         }
 
+        public async Task<ActionResult> ChangePassword(ChangePasswordDto request)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
+
+            if (user == null)
+            {
+                return new NotFoundObjectResult("User not found.");
+            }
+
+            if (!VerifyPasswordHash(request.OldPassword, user.Pwd))
+            {
+                return new UnauthorizedObjectResult("Old password is incorrect.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.NewPassword) || request.NewPassword.Length < 6)
+            {
+                return new BadRequestObjectResult("New password is too weak. Minimum length is 6 characters.");
+            }
+
+            user.Pwd = CreatePasswordHash(request.NewPassword);
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return new OkObjectResult("Password updated successfully.");
+        }
         public async Task<ActionResult<string>> RefreshToken(string refreshToken)
         {
             if (string.IsNullOrEmpty(refreshToken))
@@ -97,7 +122,7 @@ namespace BrenkaloWebStoreApi.Security
             // Rotate refresh token
             session.Token = newRefreshToken;
             session.ValidUntil = DateTime.UtcNow.AddDays(7);
-            session.CreatedAt = DateTime.UtcNow.ToString("o");
+            session.CreatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             return new JsonResult(new { accessToken, refreshToken = newRefreshToken });

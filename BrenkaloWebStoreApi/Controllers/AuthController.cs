@@ -18,7 +18,6 @@ namespace BrenkaloWebStoreApi.Controllers
         }
 
         // TODO Error handling
-        // TODO Change password
 
         // Register a new user
         [HttpPost("register")]
@@ -46,6 +45,19 @@ namespace BrenkaloWebStoreApi.Controllers
             }
 
             return loginResult.Value; // Includes access token and refresh token
+        }
+
+        [HttpPost("change-password")]
+        public async Task<ActionResult> ChangePassword(ChangePasswordDto request)
+        {
+            var result = await _authService.ChangePassword(request);
+
+            if (result is BadRequestObjectResult || result is UnauthorizedObjectResult)
+            {
+                return result; // Return the error from the service
+            }
+
+            return Ok("Password updated successfully.");
         }
 
         // Refresh the access token using a valid refresh token

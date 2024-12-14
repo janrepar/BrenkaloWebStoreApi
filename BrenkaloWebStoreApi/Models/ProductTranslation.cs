@@ -17,9 +17,9 @@ public partial class ProductTranslation
 
     public int? Status { get; set; }
 
-    public string? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    public string? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public virtual Language Language { get; set; } = null!;
 

@@ -1,4 +1,5 @@
-﻿using BrenkaloWebStoreApi.Models;
+﻿using BrenkaloWebStoreApi.Dtos;
+using BrenkaloWebStoreApi.Models;
 
 namespace BrenkaloWebStoreApi.Services
 {
@@ -6,5 +7,8 @@ namespace BrenkaloWebStoreApi.Services
     {
         Task<IEnumerable<Order>> GetAllOrdersAsync();
         Task<Order?> GetOrderByIdAsync(int id);
+        Task<Order> CreateOrderAsync(OrderDto createOrderDto);
+        Task<Order?> UpdateOrderAsync(int orderId, OrderDto updateOrderDto);
+
     }
 }

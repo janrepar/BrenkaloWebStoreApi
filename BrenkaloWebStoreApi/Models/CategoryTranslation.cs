@@ -15,9 +15,9 @@ public partial class CategoryTranslation
 
     public string? Description { get; set; }
 
-    public string? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    public string? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public virtual Category Category { get; set; } = null!;
 

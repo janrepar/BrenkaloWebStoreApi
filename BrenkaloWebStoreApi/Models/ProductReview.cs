@@ -15,9 +15,9 @@ public partial class ProductReview
 
     public int Stars { get; set; }
 
-    public string? ReviewText { get; set; }
+    public DateTime? ReviewText { get; set; }
 
-    public string? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public virtual Product Product { get; set; } = null!;
 

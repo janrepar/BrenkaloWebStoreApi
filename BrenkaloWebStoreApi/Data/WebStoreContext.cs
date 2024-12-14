@@ -147,7 +147,7 @@ public partial class WebStoreContext : DbContext
                 .HasDefaultValue(0.0)
                 .HasColumnName("discount_amount");
             entity.Property(e => e.OrderShippingMethod).HasColumnName("order_shipping_method");
-            entity.Property(e => e.OrderStatusId).HasColumnName("order_status_id");
+            entity.Property(e => e.OrderStatus).HasColumnName("order_status");
             entity.Property(e => e.PaymentMethod)
                 .HasDefaultValue("credit_card")
                 .HasColumnName("payment_method");
@@ -249,6 +249,7 @@ public partial class WebStoreContext : DbContext
             entity.Property(e => e.ModelNumber)
                 .HasDefaultValueSql("NULL")
                 .HasColumnName("model_number");
+            entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.NumberOfReviews)
                 .HasDefaultValue(0)
                 .HasColumnName("number_of_reviews");
