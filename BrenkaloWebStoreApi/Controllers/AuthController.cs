@@ -18,6 +18,7 @@ namespace BrenkaloWebStoreApi.Controllers
         }
 
         // TODO Error handling
+        // TODO Change password
 
         // Register a new user
         [HttpPost("register")]
