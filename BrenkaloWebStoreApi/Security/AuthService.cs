@@ -34,15 +34,38 @@ namespace BrenkaloWebStoreApi.Security
 
             string passwordHash = CreatePasswordHash(request.Pwd);
 
+            // Create the user object
             var user = new User
             {
                 Username = request.Username,
                 Pwd = passwordHash,
-                UserRole = request.UserRole, 
+                UserRole = request.UserRole,
                 Firstname = request.Firstname,
                 Lastname = request.Lastname,
                 Email = request.Email,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                Enabled = 1
             };
+
+            // Add user addresses if provided in the request
+            if (request.UserAddresses != null && request.UserAddresses.Any())
+            {
+                foreach (var address in request.UserAddresses)
+                {
+                    user.UserAddresses.Add(new UserAddress
+                    {
+                        AddressLine1 = address.AddressLine1,
+                        AddressLine2 = address.AddressLine2,
+                        City = address.City,
+                        State = address.State,
+                        PostalCode = address.PostalCode,
+                        Country = address.Country,
+                        IsDefault = address.IsDefault,
+                        Enabled = 1 
+                    });
+                }
+            }
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -50,7 +73,7 @@ namespace BrenkaloWebStoreApi.Security
             return user;
         }
 
-        public async Task<ActionResult<string>> Login(UserDto request)
+        public async Task<ActionResult<string>> Login(LoginDto request)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
 

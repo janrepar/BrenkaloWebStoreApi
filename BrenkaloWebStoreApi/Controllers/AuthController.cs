@@ -35,7 +35,7 @@ namespace BrenkaloWebStoreApi.Controllers
 
         // Login an existing user
         [HttpPost("login")]
-        public async Task<ActionResult<object>> Login(UserDto request)
+        public async Task<ActionResult<object>> Login(LoginDto request)
         {
             var loginResult = await _authService.Login(request);
 

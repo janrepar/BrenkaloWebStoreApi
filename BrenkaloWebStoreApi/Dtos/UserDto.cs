@@ -14,5 +14,6 @@
 
         public string Email { get; set; } = null!;
 
+        public List<UserAddressDto>? UserAddresses { get; set; } = new List<UserAddressDto>();
     }
 }

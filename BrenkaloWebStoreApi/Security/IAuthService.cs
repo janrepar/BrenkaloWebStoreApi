@@ -7,7 +7,7 @@ namespace BrenkaloWebStoreApi.Security
     public interface IAuthService
     {
         Task<ActionResult<User>> Register(UserDto request);
-        Task<ActionResult<string>> Login(UserDto request);
+        Task<ActionResult<string>> Login(LoginDto request);
         Task<ActionResult> ChangePassword(ChangePasswordDto request);
         Task<ActionResult<string>> RefreshToken(string refreshToken);
         Task<UserSession?> GetSessionByToken(string refreshToken);

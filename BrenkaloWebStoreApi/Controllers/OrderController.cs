@@ -50,6 +50,26 @@ namespace BrenkaloWebStoreApi.Controllers
             }
         }
 
+        [HttpGet("orders-by-user-id/{userId}")]
+        public async Task<IActionResult> GetOrdersByUserId(int userId)
+        {
+            try
+            {
+                var orders = await _orderService.GetOrdersByUserIdAsync(userId);
+
+                if (orders == null || !orders.Any())
+                {
+                    return NotFound(new { message = "No orders found for the user." });
+                }
+
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] OrderDto createOrderDto)
         {
@@ -84,5 +104,24 @@ namespace BrenkaloWebStoreApi.Controllers
             }
         }
 
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] string newStatus)
+        {
+            try
+            {
+                var isUpdated = await _orderService.UpdateOrderStatusAsync(id, newStatus);
+
+                if (!isUpdated)
+                {
+                    return NotFound(new { message = "Order not found" });
+                }
+
+                return Ok(new { message = "Order status updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

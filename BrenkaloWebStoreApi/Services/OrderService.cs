@@ -24,6 +24,42 @@ namespace BrenkaloWebStoreApi.Services
             return await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
         }
 
+        public async Task<List<Order>> GetOrdersByUserIdAsync(int userId)
+        {
+            var orders = await _context.Orders
+                .Where(o => o.UserId == userId)
+                .Include(o => o.OrderProducts)
+                .Select(o => new Order
+                {
+                    UserId = o.UserId,
+                    OrderShippingMethod = o.OrderShippingMethod,
+                    CustomerName = o.CustomerName,
+                    CustomerEmail = o.CustomerEmail,
+                    CustomerPhone = o.CustomerPhone,
+                    ShippingAddress = o.ShippingAddress,
+                    BillingAddress = o.BillingAddress,
+                    CustomerNotes = o.CustomerNotes,
+                    TotalAmount = o.TotalAmount,
+                    VatAmount = o.VatAmount,
+                    DiscountAmount = o.DiscountAmount,
+                    PaymentMethod = o.PaymentMethod,
+                    OrderProducts = o.OrderProducts.Select(op => new OrderProduct
+                    {
+                        ProductId = op.ProductId,
+                        ProductName = op.ProductName,
+                        ProductSku = op.ProductSku,
+                        Quantity = op.Quantity,
+                        PricePerUnit = op.PricePerUnit,
+                        TotalPrice = op.TotalPrice,
+                        VatRate = op.VatRate,
+                        VatAmount = op.VatAmount
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return orders;
+        }
+
         public async Task<Order> CreateOrderAsync(OrderDto createOrderDto)
         {
             var order = new Order
@@ -50,6 +86,27 @@ namespace BrenkaloWebStoreApi.Services
 
             foreach (var orderProductDto in createOrderDto.OrderProducts)
             {
+                // Get the product from the database
+                var product = _context.Products.FirstOrDefault(p => p.Id == orderProductDto.ProductId);
+
+                if (product == null)
+                {
+                    throw new Exception($"Product with ID {orderProductDto.ProductId} not found.");
+                }
+
+                // Check if sufficient Item Storage is available
+                if (product.ItemStorage < orderProductDto.Quantity)
+                {
+                    throw new Exception($"Insufficient stock for Product ID {product.Id}. Available stock: {product.ItemStorage}");
+                }
+
+                // Update Item Storage and Stock Status
+                product.ItemStorage -= orderProductDto.Quantity;
+                if (product.ItemStorage == 0)
+                {
+                    product.StockStatus = "OUT_OF_STOCK";
+                }
+
                 var orderProduct = new OrderProduct
                 {
                     OrderId = order.Id,
@@ -73,6 +130,7 @@ namespace BrenkaloWebStoreApi.Services
             return order;
         }
 
+        // Update order 
         public async Task<Order?> UpdateOrderAsync(int orderId, OrderDto updateOrderDto)
         {
             var order = await _context.Orders
@@ -102,9 +160,44 @@ namespace BrenkaloWebStoreApi.Services
             if (updateOrderDto.PaymentMethod != null) order.PaymentMethod = updateOrderDto.PaymentMethod;
             order.UpdatedAt = DateTime.UtcNow;
 
+            // Revert stock for old products
+            foreach (var oldProduct in order.OrderProducts)
+            {
+                var product = _context.Products.FirstOrDefault(p => p.Id == oldProduct.ProductId);
+                if (product != null)
+                {
+                    product.ItemStorage += oldProduct.Quantity; 
+                    if (product.ItemStorage > 0)
+                    {
+                        product.StockStatus = "IN_STOCK";
+                    }
+                }
+            }
+
             _context.OrderProducts.RemoveRange(order.OrderProducts); // ??? Remove old products ???
             foreach (var orderProductDto in updateOrderDto.OrderProducts)
             {
+                // Get the product from the database
+                var product = _context.Products.FirstOrDefault(p => p.Id == orderProductDto.ProductId);
+
+                if (product == null)
+                {
+                    throw new Exception($"Product with ID {orderProductDto.ProductId} not found.");
+                }
+
+                // Check if sufficient Item Storage is available
+                if (product.ItemStorage < orderProductDto.Quantity)
+                {
+                    throw new Exception($"Insufficient stock for Product ID {product.Id}. Available stock: {product.ItemStorage}");
+                }
+
+                // Update Item Storage and Stock Status
+                product.ItemStorage -= orderProductDto.Quantity;
+                if (product.ItemStorage == 0)
+                {
+                    product.StockStatus = "OUT_OF_STOCK";
+                }
+
                 var orderProduct = new OrderProduct
                 {
                     OrderId = order.Id,
@@ -126,6 +219,24 @@ namespace BrenkaloWebStoreApi.Services
             await _context.SaveChangesAsync();
 
             return order;
+        }
+
+        public async Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus)
+        {
+            var order = await _context.Orders.FindAsync(orderId);
+
+            if (order == null)
+            {
+                return false; 
+            }
+
+            order.OrderStatus = newStatus;
+            order.UpdatedAt = DateTime.UtcNow;
+
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }
