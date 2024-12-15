@@ -104,7 +104,7 @@ namespace BrenkaloWebStoreApi.Controllers
             }
         }
 
-        [HttpPatch("{id}/status")]
+        [HttpPatch("status/{id}")]
         public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] string newStatus)
         {
             try
