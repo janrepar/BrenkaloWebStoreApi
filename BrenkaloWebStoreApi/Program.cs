@@ -19,6 +19,7 @@ namespace BrenkaloWebStoreApi
             builder.Services.AddScoped<IStoreService, StoreService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IUserService, UserService>();
 
             // Add controllers.
             builder.Services.AddControllers();

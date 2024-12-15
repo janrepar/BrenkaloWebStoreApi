@@ -19,6 +19,7 @@ namespace BrenkaloWebStoreApi.Services
                 .Include(p => p.Category)
                 .Include(p => p.Subcategory)
                 .Include(p => p.Vat)
+
                 .ToListAsync();
         }
 
