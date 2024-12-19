@@ -1,6 +1,7 @@
 ﻿using BrenkaloWebStoreApi.Dtos;
 using BrenkaloWebStoreApi.Models;
 using BrenkaloWebStoreApi.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,7 @@ namespace BrenkaloWebStoreApi.Controllers
         {
             var user = await _authService.Register(request);
 
-            if (user.Value == null)
+            if (user == null)
             {
                 return BadRequest("User already exists or invalid input provided.");
             }
@@ -44,9 +45,10 @@ namespace BrenkaloWebStoreApi.Controllers
                 return BadRequest("Invalid username or password.");
             }
 
-            return loginResult.Value; // Includes access token and refresh token
+            return loginResult.Result; // Includes access token and refresh token
         }
 
+        [Authorize]
         [HttpPost("change-password")]
         public async Task<ActionResult> ChangePassword(ChangePasswordDto request)
         {
@@ -61,6 +63,7 @@ namespace BrenkaloWebStoreApi.Controllers
         }
 
         // Refresh the access token using a valid refresh token
+        [Authorize]
         [HttpPost("refresh-token")]
         public async Task<ActionResult<object>> RefreshToken([FromBody] string refreshToken)
         {
@@ -80,6 +83,7 @@ namespace BrenkaloWebStoreApi.Controllers
         }
 
         // Logout user and invalidate the refresh token
+        [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] string refreshToken)
         {
