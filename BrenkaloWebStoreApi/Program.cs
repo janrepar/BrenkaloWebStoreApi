@@ -47,8 +47,7 @@ namespace BrenkaloWebStoreApi
             // Add controllers.
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            // Add Swagger with JWT Support
-
+            // Add Swagger with JWT Support            
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
