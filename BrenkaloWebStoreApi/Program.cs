@@ -44,10 +44,22 @@ namespace BrenkaloWebStoreApi
 
             // Configure Authorization
             builder.Services.AddAuthorization();
+
+            // dodano za testiranje v localhost okolju
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowLocalhost", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173") // URL vaše React aplikacije
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             // Add controllers.
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            // Add Swagger with JWT Support            
+            // Add Swagger with JWT Support
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -104,6 +116,9 @@ namespace BrenkaloWebStoreApi
             }
 
             app.UseHttpsRedirection();
+
+            // dodano za testiranje v localhost okolju
+            app.UseCors("AllowLocalhost");
 
             app.MapControllers();
 
