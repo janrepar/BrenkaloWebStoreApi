@@ -4,10 +4,13 @@
     {
         public string Name { get; set; } = null!;
         public double Price { get; set; }
-        public string ShortDescription { get; set; } = null!;
-        public string LongDescription { get; set; } = null!;
-        public string CategoryName { get; set; } = null!;
-        // public string SubcategoryName { get; set; } = null!;
+        // Updated to hold descriptions for multiple languages
+        public Dictionary<int, string> ShortDescriptions { get; set; } = new Dictionary<int, string>();
+        public Dictionary<int, string> LongDescriptions { get; set; } = new Dictionary<int, string>();
+
+        // Updated to hold category names for multiple languages
+        public Dictionary<int, string> CategoryNames { get; set; } = new Dictionary<int, string>();
+
         public string? Brand { get; set; }
         public string? Manufacturer { get; set; }
         public string? ModelNumber { get; set; }
