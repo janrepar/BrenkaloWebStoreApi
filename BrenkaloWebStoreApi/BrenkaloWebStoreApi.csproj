@@ -7,15 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Mappers\MapperHelpers.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Mappers\MapperHelpers.cs" />
   </ItemGroup>
 
   <ItemGroup>

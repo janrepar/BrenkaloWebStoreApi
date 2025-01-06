@@ -45,12 +45,11 @@ namespace BrenkaloWebStoreApi
             // Configure Authorization
             builder.Services.AddAuthorization();
 
-            // dodano za testiranje v localhost okolju
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowLocalhost", policy =>
                 {
-                    policy.WithOrigins("http://localhost:5173") // URL vaše React aplikacije
+                    policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173") 
                           .AllowAnyHeader()
                           .AllowAnyMethod();
                 });
@@ -116,10 +115,8 @@ namespace BrenkaloWebStoreApi
             }
 
             app.UseHttpsRedirection();
-
             // dodano za testiranje v localhost okolju
             app.UseCors("AllowLocalhost");
-
             app.MapControllers();
 
             app.Run();

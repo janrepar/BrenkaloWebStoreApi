@@ -40,7 +40,7 @@ namespace BrenkaloWebStoreApi.Controllers
         {
             var loginResult = await _authService.Login(request);
 
-            if (loginResult.Result == null)
+            if (loginResult == null)
             {
                 return BadRequest("Invalid username or password.");
             }

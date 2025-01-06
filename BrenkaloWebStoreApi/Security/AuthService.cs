@@ -114,7 +114,7 @@ namespace BrenkaloWebStoreApi.Security
                 return new UnauthorizedObjectResult("Old password is incorrect.");
             }
 
-            if (string.IsNullOrWhiteSpace(request.NewPassword) || request.NewPassword.Length < 6)
+            if (string.IsNullOrWhiteSpace(request.NewPassword) || request.NewPassword.Length < 5)
             {
                 return new BadRequestObjectResult("New password is too weak. Minimum length is 6 characters.");
             }

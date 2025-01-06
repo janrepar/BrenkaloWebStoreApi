@@ -12,6 +12,8 @@
 
         public string Pwd { get; set; } = null!;
 
+        public string PwdRpt { get; set; } = null!;
+
         public string Email { get; set; } = null!;
 
         public List<UserAddressDto>? UserAddresses { get; set; } = new List<UserAddressDto>();
