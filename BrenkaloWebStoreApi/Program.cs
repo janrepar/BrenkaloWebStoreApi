@@ -1,4 +1,5 @@
 using BrenkaloWebStoreApi.Data;
+using BrenkaloWebStoreApi.Models;
 using BrenkaloWebStoreApi.Security;
 using BrenkaloWebStoreApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,6 +17,15 @@ namespace BrenkaloWebStoreApi
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            // Load configuration from environment variables
+            builder.Configuration.AddEnvironmentVariables();
+
+            builder.Configuration.AddJsonFile("emailSettings.json", optional: false, reloadOnChange: true);
+
+            // Add services to the DI container
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddTransient<IEmailService, EmailService>(); // Register your EmailService
+
             builder.Services.AddDbContext<WebStoreContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))); // Update the connection string
 

@@ -1,6 +1,7 @@
 ﻿using BrenkaloWebStoreApi.Data;
 using BrenkaloWebStoreApi.Dtos;
 using BrenkaloWebStoreApi.Models;
+using BrenkaloWebStoreApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,16 +15,18 @@ namespace BrenkaloWebStoreApi.Security
     {
         private readonly IConfiguration _configuration;
         private readonly WebStoreContext _context;
+        private readonly IEmailService _emailService;
 
-        public AuthService(IConfiguration configuration, WebStoreContext context)
+        public AuthService(IConfiguration configuration, WebStoreContext context, IEmailService emailService)
         {
             _configuration = configuration;
             _context = context;
+            _emailService = emailService;
         }
 
         // TODO Error handling
 
-        public async Task<ActionResult<User>> Register(UserDto request)
+        public async Task<ActionResult<UserDto>> Register(UserDto request)
         {
             var userInDB = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
 
@@ -70,7 +73,7 @@ namespace BrenkaloWebStoreApi.Security
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            return request;
         }
 
         public async Task<ActionResult<string>> Login(LoginDto request)
@@ -125,6 +128,31 @@ namespace BrenkaloWebStoreApi.Security
 
             return new OkObjectResult("Password updated successfully.");
         }
+
+        public async Task<ActionResult> ResetPassword(string email)
+        {
+            // Check if user exists by email
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+            {
+                return new NotFoundObjectResult("User not found.");
+            }
+
+            // Generate a new random password
+            var newPassword = GenerateRandomPassword();
+
+            // Hash the new password and update the user's password
+            user.Pwd = CreatePasswordHash(newPassword);
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            // Send email with the new password
+            var emailMessage = _emailService.BuildMessageBody(user.Email, newPassword);
+            await _emailService.SendMessageAsync(emailMessage);
+
+            return new OkObjectResult("Password reset successfully. A new password has been sent to your email.");
+        }
+
         public async Task<ActionResult<string>> RefreshToken(string refreshToken)
         {
             if (string.IsNullOrEmpty(refreshToken))
@@ -203,6 +231,14 @@ namespace BrenkaloWebStoreApi.Security
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
             return jwt;
+        }
+
+        // Generates a random password with 3 words separated by hyphens
+        private string GenerateRandomPassword()
+        {
+            var words = new[] { "apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "car", "sun", "city", "door", "guitar", "algae", "water", "fire", "earth", "lightning"};
+            var random = new Random();
+            return $"{words[random.Next(words.Length)]}-{words[random.Next(words.Length)]}-{words[random.Next(words.Length)]}";
         }
 
         // Create password hash and return it as a Base64 string

@@ -48,6 +48,12 @@ namespace BrenkaloWebStoreApi.Services
             return userDto;
         }
 
+        // Get user by email
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
         // Update User
         public async Task<bool> UpdateUserAsync(string username, UserDto userDto)
         {

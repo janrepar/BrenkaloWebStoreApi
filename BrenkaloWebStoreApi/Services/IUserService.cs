@@ -7,5 +7,6 @@ namespace BrenkaloWebStoreApi.Services
     {
         Task<UserDto?> GetUserByUsernameAsync(string username);
         Task<bool> UpdateUserAsync(string username, UserDto userDto);
+        Task<User> GetUserByEmailAsync(string email);
     }
 }

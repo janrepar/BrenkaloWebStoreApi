@@ -16,7 +16,8 @@
       "launchUrl": "",
       "applicationUrl": "http://0.0.0.0:5020",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "EMAIL_PASSWORD": "4nOBVKcfNwltaV2"
       }
     },
     "https": {
@@ -26,7 +27,8 @@
       "launchUrl": "",
       "applicationUrl": "https://localhost:7068;http://0.0.0.0:5020",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "EMAIL_PASSWORD": "4nOBVKcfNwltaV2"
       }
     },
     "IIS Express": {
@@ -34,7 +36,8 @@
       "launchBrowser": true,
       "launchUrl": "",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "EMAIL_PASSWORD": "4nOBVKcfNwltaV2"
       }
     }
   }

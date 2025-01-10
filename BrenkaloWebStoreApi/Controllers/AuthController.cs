@@ -3,6 +3,7 @@ using BrenkaloWebStoreApi.Models;
 using BrenkaloWebStoreApi.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BrenkaloWebStoreApi.Controllers
@@ -60,6 +61,15 @@ namespace BrenkaloWebStoreApi.Controllers
             }
 
             return Ok("Password updated successfully.");
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] Dtos.ResetPasswordDto request)
+        {
+            var result = await _authService.ResetPassword(request.Email);
+
+            // If the email doesn't exist or any other error occurs, it will be handled in AuthService
+            return result;
         }
 
         // Refresh the access token using a valid refresh token
