@@ -67,10 +67,10 @@ namespace BrenkaloWebStoreApi.Services
             }
 
             // Update user details
-            user.UserRole = userDto.UserRole ?? user.UserRole;
-            user.Firstname = userDto.Firstname ?? user.Firstname;
-            user.Lastname = userDto.Lastname ?? user.Lastname;
-            user.Email = userDto.Email ?? user.Email;
+            user.UserRole = !string.IsNullOrEmpty(userDto.UserRole) ? userDto.UserRole : user.UserRole;
+            user.Firstname = !string.IsNullOrEmpty(userDto.Firstname) ? userDto.Firstname : user.Firstname;
+            user.Lastname = !string.IsNullOrEmpty(userDto.Lastname) ? userDto.Lastname : user.Lastname;
+            user.Email = !string.IsNullOrEmpty(userDto.Email) ? userDto.Email : user.Email;
 
             // Update user addresses if needed
             if (userDto.UserAddresses != null)
@@ -82,12 +82,12 @@ namespace BrenkaloWebStoreApi.Services
                     if (existingAddress != null)
                     {
                         // Update existing address
-                        existingAddress.AddressLine1 = addressDto.AddressLine1 ?? existingAddress.AddressLine1;
-                        existingAddress.AddressLine2 = addressDto.AddressLine2 ?? existingAddress.AddressLine2;
-                        existingAddress.City = addressDto.City ?? existingAddress.City;
-                        existingAddress.State = addressDto.State ?? existingAddress.State;
-                        existingAddress.PostalCode = addressDto.PostalCode ?? existingAddress.PostalCode;
-                        existingAddress.Country = addressDto.Country ?? existingAddress.Country;
+                        existingAddress.AddressLine1 = !string.IsNullOrEmpty(addressDto.AddressLine1) ? addressDto.AddressLine1 : existingAddress.AddressLine1;
+                        existingAddress.AddressLine2 = !string.IsNullOrEmpty(addressDto.AddressLine2) ? addressDto.AddressLine2 : existingAddress.AddressLine2;
+                        existingAddress.City = !string.IsNullOrEmpty(addressDto.City) ? addressDto.City : existingAddress.City;
+                        existingAddress.State = !string.IsNullOrEmpty(addressDto.State) ? addressDto.State : existingAddress.State;
+                        existingAddress.PostalCode = !string.IsNullOrEmpty(addressDto.PostalCode) ? addressDto.PostalCode : existingAddress.PostalCode;
+                        existingAddress.Country = !string.IsNullOrEmpty(addressDto.Country) ? addressDto.Country : existingAddress.Country;
                         existingAddress.IsDefault = addressDto.IsDefault ?? existingAddress.IsDefault;
                     }
                     else
