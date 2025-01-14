@@ -23,16 +23,16 @@ namespace BrenkaloWebStoreApi.Controllers
 
         // Register a new user
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(UserDto request)
+        public async Task<ActionResult> Register(RegisterDto request)
         {
-            var user = await _authService.Register(request);
+            var registerResult = await _authService.Register(request);
 
-            if (user == null)
+            if (registerResult == null)
             {
                 return BadRequest("User already exists or invalid input provided.");
             }
 
-            return Ok(user.Value);
+            return Ok("User registered successfully");
         }
 
         // Login an existing user

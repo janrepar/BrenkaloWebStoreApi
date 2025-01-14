@@ -33,6 +33,7 @@ namespace BrenkaloWebStoreApi.Services
                 Firstname = user.Firstname,
                 Lastname = user.Lastname,
                 Email = user.Email,
+                Tel = user.UserGuid,
                 UserAddresses = user.UserAddresses.Select(ua => new UserAddressDto
                 {
                     AddressLine1 = ua.AddressLine1,
@@ -71,6 +72,7 @@ namespace BrenkaloWebStoreApi.Services
             user.Firstname = !string.IsNullOrEmpty(userDto.Firstname) ? userDto.Firstname : user.Firstname;
             user.Lastname = !string.IsNullOrEmpty(userDto.Lastname) ? userDto.Lastname : user.Lastname;
             user.Email = !string.IsNullOrEmpty(userDto.Email) ? userDto.Email : user.Email;
+            user.UserGuid = !string.IsNullOrEmpty(userDto.Tel) ? userDto.Tel : user.UserGuid;
 
             // Update user addresses if needed
             if (userDto.UserAddresses != null)

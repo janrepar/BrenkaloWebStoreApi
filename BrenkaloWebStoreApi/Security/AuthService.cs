@@ -26,7 +26,7 @@ namespace BrenkaloWebStoreApi.Security
 
         // TODO Error handling
 
-        public async Task<ActionResult<UserDto>> Register(UserDto request)
+        public async Task<ActionResult> Register(RegisterDto request)
         {
             var userInDB = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
 
@@ -46,6 +46,7 @@ namespace BrenkaloWebStoreApi.Security
                 Firstname = request.Firstname,
                 Lastname = request.Lastname,
                 Email = request.Email,
+                UserGuid = request.Tel,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 Enabled = 1
@@ -73,7 +74,7 @@ namespace BrenkaloWebStoreApi.Security
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return request;
+            return new OkObjectResult("User registered successfully");
         }
 
         public async Task<ActionResult<string>> Login(LoginDto request)

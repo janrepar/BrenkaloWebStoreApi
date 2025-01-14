@@ -1,6 +1,6 @@
 ﻿namespace BrenkaloWebStoreApi.Dtos
 {
-    public class UserDto
+    public class RegisterDto
     {
         public string Username { get; set; } = null!;
 
@@ -9,6 +9,10 @@
         public string? Firstname { get; set; }
 
         public string? Lastname { get; set; }
+
+        public string Pwd { get; set; } = null!;
+
+        public string PwdRpt { get; set; } = null!;
 
         public string Email { get; set; } = null!;
 
