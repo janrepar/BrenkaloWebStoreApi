@@ -31,12 +31,16 @@ namespace BrenkaloWebStoreApi.Services
                 .Include(o => o.OrderProducts)
                 .Select(o => new Order
                 {
+                    Id = o.Id,
                     UserId = o.UserId,
                     OrderShippingMethod = o.OrderShippingMethod,
                     CustomerName = o.CustomerName,
                     CustomerEmail = o.CustomerEmail,
                     CustomerPhone = o.CustomerPhone,
                     ShippingAddress = o.ShippingAddress,
+                    ShippingTrackingCode = o.ShippingTrackingCode,
+                    CreatedAt = o.CreatedAt,
+                    UpdatedAt = o.UpdatedAt,
                     BillingAddress = o.BillingAddress,
                     CustomerNotes = o.CustomerNotes,
                     TotalAmount = o.TotalAmount,
