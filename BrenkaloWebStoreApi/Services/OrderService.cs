@@ -14,22 +14,11 @@ namespace BrenkaloWebStoreApi.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync()
         {
-            return await _context.Orders.ToListAsync();
-        }
-
-        public async Task<Order?> GetOrderByIdAsync(int id)
-        {
-            return await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
-        }
-
-        public async Task<List<Order>> GetOrdersByUserIdAsync(int userId)
-        {
-            var orders = await _context.Orders
-                .Where(o => o.UserId == userId)
+            return await _context.Orders
                 .Include(o => o.OrderProducts)
-                .Select(o => new Order
+                .Select(o => new OrderDto
                 {
                     Id = o.Id,
                     UserId = o.UserId,
@@ -43,11 +32,91 @@ namespace BrenkaloWebStoreApi.Services
                     UpdatedAt = o.UpdatedAt,
                     BillingAddress = o.BillingAddress,
                     CustomerNotes = o.CustomerNotes,
+                    OrderStatus = o.OrderStatus,
                     TotalAmount = o.TotalAmount,
                     VatAmount = o.VatAmount,
                     DiscountAmount = o.DiscountAmount,
                     PaymentMethod = o.PaymentMethod,
-                    OrderProducts = o.OrderProducts.Select(op => new OrderProduct
+                    OrderProducts = o.OrderProducts.Select(op => new OrderProductDto
+                    {
+                        ProductId = op.ProductId,
+                        ProductName = op.ProductName,
+                        ProductSku = op.ProductSku,
+                        Quantity = op.Quantity,
+                        PricePerUnit = op.PricePerUnit,
+                        TotalPrice = op.TotalPrice,
+                        VatRate = op.VatRate,
+                        VatAmount = op.VatAmount
+                    }).ToList()
+                })
+                .ToListAsync();
+        }
+
+        public async Task<OrderDto?> GetOrderByIdAsync(int id)
+        {
+            return await _context.Orders
+                .Include(o => o.OrderProducts)
+                .Where(o => o.Id == id)
+                .Select(o => new OrderDto
+                {
+                    Id = o.Id,
+                    UserId = o.UserId,
+                    OrderShippingMethod = o.OrderShippingMethod,
+                    CustomerName = o.CustomerName,
+                    CustomerEmail = o.CustomerEmail,
+                    CustomerPhone = o.CustomerPhone,
+                    ShippingAddress = o.ShippingAddress,
+                    ShippingTrackingCode = o.ShippingTrackingCode,
+                    CreatedAt = o.CreatedAt,
+                    UpdatedAt = o.UpdatedAt,
+                    BillingAddress = o.BillingAddress,
+                    CustomerNotes = o.CustomerNotes,
+                    OrderStatus = o.OrderStatus,
+                    TotalAmount = o.TotalAmount,
+                    VatAmount = o.VatAmount,
+                    DiscountAmount = o.DiscountAmount,
+                    PaymentMethod = o.PaymentMethod,
+                    OrderProducts = o.OrderProducts.Select(op => new OrderProductDto
+                    {
+                        ProductId = op.ProductId,
+                        ProductName = op.ProductName,
+                        ProductSku = op.ProductSku,
+                        Quantity = op.Quantity,
+                        PricePerUnit = op.PricePerUnit,
+                        TotalPrice = op.TotalPrice,
+                        VatRate = op.VatRate,
+                        VatAmount = op.VatAmount
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+        }
+
+
+        public async Task<List<OrderDto>> GetOrdersByUserIdAsync(int userId)
+        {
+            var orders = await _context.Orders
+                .Where(o => o.UserId == userId)
+                .Include(o => o.OrderProducts)
+                .Select(o => new OrderDto
+                {
+                    Id = o.Id,
+                    UserId = o.UserId,
+                    OrderShippingMethod = o.OrderShippingMethod,
+                    CustomerName = o.CustomerName,
+                    CustomerEmail = o.CustomerEmail,
+                    CustomerPhone = o.CustomerPhone,
+                    ShippingAddress = o.ShippingAddress,
+                    ShippingTrackingCode = o.ShippingTrackingCode,
+                    CreatedAt = o.CreatedAt,
+                    UpdatedAt = o.UpdatedAt,
+                    BillingAddress = o.BillingAddress,
+                    CustomerNotes = o.CustomerNotes,
+                    OrderStatus = o.OrderStatus,
+                    TotalAmount = o.TotalAmount,
+                    VatAmount = o.VatAmount,
+                    DiscountAmount = o.DiscountAmount,
+                    PaymentMethod = o.PaymentMethod,
+                    OrderProducts = o.OrderProducts.Select(op => new OrderProductDto
                     {
                         ProductId = op.ProductId,
                         ProductName = op.ProductName,
@@ -64,7 +133,8 @@ namespace BrenkaloWebStoreApi.Services
             return orders;
         }
 
-        public async Task<Order> CreateOrderAsync(OrderDto createOrderDto)
+
+        public async Task<OrderDto> CreateOrderAsync(OrderDto createOrderDto)
         {
             var order = new Order
             {
@@ -131,7 +201,42 @@ namespace BrenkaloWebStoreApi.Services
 
             await _context.SaveChangesAsync();
 
-            return order;
+            // Build and return the OrderDto
+            var createdOrderDto = new OrderDto
+            {
+                Id = order.Id,
+                UserId = order.UserId,
+                OrderShippingMethod = order.OrderShippingMethod,
+                CustomerName = order.CustomerName,
+                CustomerEmail = order.CustomerEmail,
+                CustomerPhone = order.CustomerPhone,
+                ShippingAddress = order.ShippingAddress,
+                BillingAddress = order.BillingAddress,
+                CustomerNotes = order.CustomerNotes,
+                TotalAmount = order.TotalAmount,
+                VatAmount = order.VatAmount,
+                DiscountAmount = order.DiscountAmount,
+                PaymentMethod = order.PaymentMethod,
+                OrderStatus = order.OrderStatus,
+                CreatedAt = order.CreatedAt,
+                UpdatedAt = order.UpdatedAt,
+                OrderProducts = _context.OrderProducts
+                    .Where(op => op.OrderId == order.Id)
+                    .Select(op => new OrderProductDto
+                    {
+                        ProductId = op.ProductId,
+                        ProductName = op.ProductName,
+                        ProductSku = op.ProductSku,
+                        Quantity = op.Quantity,
+                        PricePerUnit = op.PricePerUnit,
+                        TotalPrice = op.TotalPrice,
+                        VatRate = op.VatRate,
+                        VatAmount = op.VatAmount
+                    })
+                    .ToList()
+            };
+
+            return createdOrderDto;
         }
 
         // Update order 

@@ -66,7 +66,13 @@ namespace BrenkaloWebStoreApi
             });
 
             // Add controllers.
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    options.JsonSerializerOptions.WriteIndented = true; // Optional for better readability
+                });
+            ;
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             // Add Swagger with JWT Support
             builder.Services.AddEndpointsApiExplorer();

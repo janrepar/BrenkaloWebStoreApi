@@ -5,10 +5,10 @@ namespace BrenkaloWebStoreApi.Services
 {
     public interface IOrderService
     {
-        Task<IEnumerable<Order>> GetAllOrdersAsync();
-        Task<Order?> GetOrderByIdAsync(int id);
-        Task<List<Order>> GetOrdersByUserIdAsync(int userId);
-        Task<Order> CreateOrderAsync(OrderDto createOrderDto);
+        Task<IEnumerable<OrderDto>> GetAllOrdersAsync();
+        Task<OrderDto?> GetOrderByIdAsync(int id);
+        Task<List<OrderDto>> GetOrdersByUserIdAsync(int userId);
+        Task<OrderDto> CreateOrderAsync(OrderDto createOrderDto);
         Task<Order?> UpdateOrderAsync(int orderId, OrderDto updateOrderDto);
         Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus);
     }
