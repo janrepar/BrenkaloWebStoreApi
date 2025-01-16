@@ -7,7 +7,8 @@
         public double Price { get; set; }
         public string ShortDescription { get; set; } 
         public string LongDescription { get; set; }
-        public string CategoryName { get; set; } 
+        public string CategoryName { get; set; }
+        public int CategoryId { get; set; }
         public string? Brand { get; set; }
         public string? Manufacturer { get; set; }
         public string? ModelNumber { get; set; }

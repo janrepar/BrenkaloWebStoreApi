@@ -33,6 +33,7 @@ namespace BrenkaloWebStoreApi.Services
                 Price = product.Price,
                 ShortDescription = shortDescription ?? string.Empty,
                 LongDescription = longDescription ?? string.Empty,
+                CategoryId = product.CategoryId,
                 CategoryName = categoryTranslation?.Name ?? string.Empty,
                 Brand = product.Brand,
                 Manufacturer = product.Manufacturer,
