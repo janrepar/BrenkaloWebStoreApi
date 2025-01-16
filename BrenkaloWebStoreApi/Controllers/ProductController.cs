@@ -18,11 +18,13 @@ namespace BrenkaloWebStoreApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts([FromHeader(Name = "Accept-Language")] string? language = "en")
         {
             try
             {
-                var products = await _productService.GetAllProductsAsync();
+                int languageId = MapToLanguageId(language);
+
+                var products = await _productService.GetAllProductsAsync(languageId);
                 return Ok(products);
             }
             catch (Exception)
@@ -32,11 +34,13 @@ namespace BrenkaloWebStoreApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProductById(int id)
+        public async Task<IActionResult> GetProductById(int id, [FromHeader(Name = "Accept-Language")] string? language = "en")
         {
             try
             {
-                var product = await _productService.GetProductByIdAsync(id);
+                int languageId = MapToLanguageId(language);
+
+                var product = await _productService.GetProductByIdAsync(id, languageId);
 
                 if (product == null)
                 {
@@ -98,6 +102,19 @@ namespace BrenkaloWebStoreApi.Controllers
             }
 
             return NoContent(); 
+        }
+
+        [NonAction]
+        public static int MapToLanguageId  (string language)
+        {
+            int languageId = language?.ToLower() switch
+            {
+                "sl" => 2, // Slovenian
+                "en" => 1, // English
+                _ => 1 // Default to English
+            };
+
+            return languageId;
         }
     }
 }

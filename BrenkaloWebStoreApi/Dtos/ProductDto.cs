@@ -2,15 +2,12 @@
 {
     public class ProductDto
     {
+        public int Id { get; set; }
         public string Name { get; set; } = null!;
         public double Price { get; set; }
-        // Updated to hold descriptions for multiple languages
-        public Dictionary<int, string> ShortDescriptions { get; set; } = new Dictionary<int, string>();
-        public Dictionary<int, string> LongDescriptions { get; set; } = new Dictionary<int, string>();
-
-        // Updated to hold category names for multiple languages
-        public Dictionary<int, string> CategoryNames { get; set; } = new Dictionary<int, string>();
-
+        public string ShortDescriptio { get; set; } 
+        public string LongDescription { get; set; }
+        public string CategoryName { get; set; } 
         public string? Brand { get; set; }
         public string? Manufacturer { get; set; }
         public string? ModelNumber { get; set; }

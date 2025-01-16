@@ -14,13 +14,26 @@ namespace BrenkaloWebStoreApi.Services
             _context = context;
         }
 
-        // Map Product to ProductDto
-        private ProductDto MapToProductDto(Product product)
+        private ProductDto MapToProductDto(Product product, int languageId)
         {
+            // Find the translation for the specified language
+            var productTranslation = product.ProductTranslations.FirstOrDefault(pt => pt.LanguageId == languageId);
+            var shortDescription = product.ProductDescriptions
+                .FirstOrDefault(pd => pd.LanguageId == languageId && pd.DescriptionTypeId == 1)?.Description;
+            var longDescription = product.ProductDescriptions
+                .FirstOrDefault(pd => pd.LanguageId == languageId && pd.DescriptionTypeId == 2)?.Description;
+            var categoryTranslation = product.Category.CategoryTranslations
+                .FirstOrDefault(ct => ct.LanguageId == languageId);
+
+            // Map the data to the ProductDto
             var productDto = new ProductDto
             {
-                Name = product.Name!,
+                Id = product.Id,
+                Name = productTranslation?.Name ?? product.Name!,
                 Price = product.Price,
+                ShortDescriptio = shortDescription ?? string.Empty,
+                LongDescription = longDescription ?? string.Empty,
+                CategoryName = categoryTranslation?.Name ?? string.Empty,
                 Brand = product.Brand,
                 Manufacturer = product.Manufacturer,
                 ModelNumber = product.ModelNumber,
@@ -43,45 +56,10 @@ namespace BrenkaloWebStoreApi.Services
                 }).ToList()
             };
 
-            // Get all descriptions in different languages
-            var descriptions = product.ProductDescriptions
-                .GroupBy(pd => pd.LanguageId)
-                .ToList();
-
-            foreach (var group in descriptions)
-            {
-                var languageId = group.Key;
-                foreach (var description in group)
-                {
-                    if (description.DescriptionTypeId == 1) // Short Description
-                    {
-                        productDto.ShortDescriptions[languageId] = description.Description;
-                    }
-                    else if (description.DescriptionTypeId == 2) // Long Description
-                    {
-                        productDto.LongDescriptions[languageId] = description.Description;
-                    }
-                }
-            }
-
-            // Get category translations for different languages
-            var categoryTranslations = product.Category.CategoryTranslations
-                .GroupBy(ct => ct.LanguageId)
-                .ToList();
-
-            foreach (var group in categoryTranslations)
-            {
-                var languageId = group.Key;
-                foreach (var translation in group)
-                {
-                    productDto.CategoryNames[languageId] = translation.Name;
-                }
-            }
-
             return productDto;
         }
 
-        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
+        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync(int languageId)
         {
             var products = await _context.Products
                 .Include(p => p.Category)
@@ -93,10 +71,11 @@ namespace BrenkaloWebStoreApi.Services
                 .ThenInclude(pd => pd.Language)
                 .ToListAsync();
 
-            return products.Select(MapToProductDto);
+            return products.Select(product => MapToProductDto(product, languageId));
         }
 
-        public async Task<ProductDto?> GetProductByIdAsync(int id)
+
+        public async Task<ProductDto?> GetProductByIdAsync(int id, int languageId)
         {
             var product = await _context.Products
                 .Include(p => p.Category)
@@ -112,8 +91,9 @@ namespace BrenkaloWebStoreApi.Services
                 return null;
             }
 
-            return MapToProductDto(product);
+            return MapToProductDto(product, languageId);
         }
+
 
         // Retrieve all reviews for a product
         public async Task<IEnumerable<ProductReview>> GetProductReviewsAsync(int productId)
