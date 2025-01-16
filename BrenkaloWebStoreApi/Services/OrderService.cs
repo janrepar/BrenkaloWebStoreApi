@@ -133,11 +133,35 @@ namespace BrenkaloWebStoreApi.Services
             return orders;
         }
 
-        public async Task<OrderDto> CreateOrderAsync(OrderDto createOrderDto)
+        public async Task<OrderDto> CreateOrderAsync(OrderDto createOrderDto, string? token)
         {
+            int? userId = null;
+
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                // Remove "Bearer " prefix if present and any surrounding quotes
+                if (token.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                {
+                    token = token.Substring("Bearer ".Length).Trim();
+                }
+                token = token.Replace("\"", "").Trim();
+
+                // Fetch the user session using the token
+                var userSession = await _context.UserSessions
+                    .FirstOrDefaultAsync(us => us.Token == token && us.ValidUntil > DateTime.UtcNow);
+
+                if (userSession == null)
+                {
+                    throw new UnauthorizedAccessException("Invalid or expired token.");
+                }
+
+                // Set the UserId from the user session
+                userId = userSession.UserId;
+            }
+
             var order = new Order
             {
-                UserId = createOrderDto.UserId,  
+                UserId = userId,  
                 OrderShippingMethod = createOrderDto.OrderShippingMethod,
                 CustomerName = createOrderDto.CustomerName,
                 CustomerEmail = createOrderDto.CustomerEmail,

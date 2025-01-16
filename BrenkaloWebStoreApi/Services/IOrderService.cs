@@ -8,7 +8,7 @@ namespace BrenkaloWebStoreApi.Services
         Task<IEnumerable<OrderDto>> GetAllOrdersAsync();
         Task<OrderDto?> GetOrderByIdAsync(int id);
         Task<List<OrderDto>> GetOrdersByUserIdAsync(int userId);
-        Task<OrderDto> CreateOrderAsync(OrderDto createOrderDto);
+        Task<OrderDto> CreateOrderAsync(OrderDto createOrderDto, string? token);
         Task<Order?> UpdateOrderAsync(int orderId, OrderDto updateOrderDto);
         Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus);
     }

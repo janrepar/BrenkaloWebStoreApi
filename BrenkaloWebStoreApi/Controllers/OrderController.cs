@@ -10,7 +10,6 @@ namespace BrenkaloWebStoreApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
@@ -37,6 +36,7 @@ namespace BrenkaloWebStoreApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetOrderById(int id)
         {
             try
@@ -57,6 +57,7 @@ namespace BrenkaloWebStoreApi.Controllers
         }
 
         [HttpGet("orders-by-user-id")]
+        [Authorize]
         public async Task<IActionResult> GetOrdersByUserId([FromHeader(Name = "Authorization")] string? token)
         {
             try
@@ -96,11 +97,11 @@ namespace BrenkaloWebStoreApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] OrderDto createOrderDto)
+        public async Task<IActionResult> CreateOrder([FromBody] OrderDto orderDto, [FromHeader(Name = "Authorization")] string? token)
         {
             try
             {
-                var order = await _orderService.CreateOrderAsync(createOrderDto);
+                var order = await _orderService.CreateOrderAsync(orderDto, token);
                 return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, order);
             }
             catch (Exception ex)
@@ -110,6 +111,7 @@ namespace BrenkaloWebStoreApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderDto updateOrderDto)
         {
             try
@@ -130,6 +132,7 @@ namespace BrenkaloWebStoreApi.Controllers
         }
 
         [HttpPatch("status/{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] string newStatus)
         {
             try
