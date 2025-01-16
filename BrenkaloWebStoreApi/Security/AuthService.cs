@@ -94,7 +94,7 @@ namespace BrenkaloWebStoreApi.Security
             var session = new UserSession
             {
                 UserId = user.Id,
-                Token = refreshToken,
+                Token = accessToken,
                 RequestIp = "UserIPAddress", 
                 ValidUntil = DateTime.UtcNow.AddDays(7), 
             };

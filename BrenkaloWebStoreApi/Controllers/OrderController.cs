@@ -1,8 +1,10 @@
-﻿using BrenkaloWebStoreApi.Dtos;
+﻿using BrenkaloWebStoreApi.Data;
+using BrenkaloWebStoreApi.Dtos;
 using BrenkaloWebStoreApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BrenkaloWebStoreApi.Controllers
 {
@@ -12,10 +14,12 @@ namespace BrenkaloWebStoreApi.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
+        private readonly WebStoreContext _context;
 
-        public OrderController(IOrderService orderService)
+        public OrderController(IOrderService orderService, WebStoreContext webStoreContext)
         {
             _orderService = orderService;
+            _context = webStoreContext;
         }
 
         [HttpGet]
@@ -52,12 +56,31 @@ namespace BrenkaloWebStoreApi.Controllers
             }
         }
 
-        [HttpGet("orders-by-user-id/{userId}")]
-        public async Task<IActionResult> GetOrdersByUserId(int userId)
+        [HttpGet("orders-by-user-id")]
+        public async Task<IActionResult> GetOrdersByUserId([FromHeader(Name = "Authorization")] string? token)
         {
             try
             {
-                var orders = await _orderService.GetOrdersByUserIdAsync(userId);
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    return Unauthorized("Token is missing.");
+                }
+
+                // Remove "Bearer " prefix if present
+                if (token.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                {
+                    token = token.Substring("Bearer ".Length).Trim();
+                }
+
+                var userSession = await _context.UserSessions
+                    .FirstOrDefaultAsync(us => us.Token == token && us.ValidUntil > DateTime.UtcNow);
+
+                if (userSession == null)
+                {
+                    return Unauthorized("Invalid or expired token.");
+                }
+
+                var orders = await _orderService.GetOrdersByUserIdAsync(userSession.UserId);
 
                 if (orders == null || !orders.Any())
                 {
